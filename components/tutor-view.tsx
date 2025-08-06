@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { TutorChatbot } from "@/components/tutor-chatbot"
 import { StudyPlan } from "@/components/study-plan"
+import { ThemeToggle } from "@/components/ui/theme-toggle"
 import type { Student } from "@/app/page"
 import { LogOut, User, Clock, BookOpen, Brain } from "lucide-react"
 
@@ -16,23 +17,26 @@ interface TutorViewProps {
 
 export function TutorView({ students, currentStudent, onStudentSelect, onLogout }: TutorViewProps) {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="bg-[#8B1538] text-white p-4">
+      <header className="bg-primary text-primary-foreground p-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-[#8B1538] font-bold text-lg">O&L</span>
+            <div className="w-10 h-10 bg-primary-foreground rounded-lg flex items-center justify-center">
+              <span className="text-primary font-bold text-lg">O&L</span>
             </div>
             <div>
               <h1 className="text-xl font-serif font-bold">Owl & Lion Access</h1>
               <p className="text-sm opacity-90">Tutor Dashboard</p>
             </div>
           </div>
-          <Button onClick={onLogout} variant="ghost" size="sm" className="text-white hover:bg-white/10">
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
-          </Button>
+          <div className="flex items-center space-x-2">
+            <ThemeToggle />
+            <Button onClick={onLogout} variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/10">
+              <LogOut className="w-4 h-4 mr-2" />
+              Logout
+            </Button>
+          </div>
         </div>
       </header>
 
@@ -40,16 +44,16 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
         {!currentStudent ? (
           <div className="space-y-6">
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-serif font-bold text-[#8B1538]">Your Tutees</h2>
-              <p className="text-gray-600 font-serif">Select a student to view their profile and create study plans</p>
+              <h2 className="text-2xl font-serif font-bold text-primary">Your Tutees</h2>
+              <p className="text-muted-foreground font-serif">Select a student to view their profile and create study plans</p>
             </div>
 
             {students.length === 0 ? (
               <Card className="text-center p-8">
                 <CardContent>
-                  <User className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-                  <h3 className="text-lg font-serif font-medium text-gray-600 mb-2">No Students Yet</h3>
-                  <p className="text-gray-500 font-serif">
+                  <User className="w-12 h-12 mx-auto text-muted mb-4" />
+                  <h3 className="text-lg font-serif font-medium text-muted-foreground mb-2">No Students Yet</h3>
+                  <p className="text-muted-foreground font-serif">
                     Students will appear here once they register and are matched with you.
                   </p>
                 </CardContent>
@@ -59,23 +63,23 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
                 {students.map((student) => (
                   <Card
                     key={student.student_id}
-                    className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-[#8B1538]"
+                    className="cursor-pointer hover:shadow-lg transition-shadow border-2 hover:border-primary bg-card"
                     onClick={() => onStudentSelect(student)}
                   >
                     <CardHeader>
-                      <CardTitle className="font-serif text-[#8B1538] flex items-center">
+                      <CardTitle className="font-serif text-primary flex items-center">
                         <User className="w-5 h-5 mr-2" />
-                        {student.student_id}
+                        {student.display_name}
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-3">
                       <div className="flex items-center space-x-2">
-                        <Brain className="w-4 h-4 text-gray-500" />
+                        <Brain className="w-4 h-4 text-muted-foreground" />
                         <span className="font-serif text-sm">{student.primary_disability}</span>
                       </div>
 
                       <div className="flex items-center space-x-2">
-                        <BookOpen className="w-4 h-4 text-gray-500" />
+                        <BookOpen className="w-4 h-4 text-muted-foreground" />
                         <span className="font-serif text-sm">{student.learning_preferences.style}</span>
                       </div>
 
@@ -92,7 +96,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
                         )}
                       </div>
 
-                      <div className="flex items-center space-x-2 text-sm text-gray-500">
+                      <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4" />
                         <span className="font-serif">
                           {student.learning_preferences.modality} • {student.learning_preferences.format}
@@ -112,17 +116,17 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
             </Button>
 
             {/* Student Profile Summary */}
-            <Card className="border-2 border-[#8B1538]">
-              <CardHeader className="bg-[#8B1538] text-white">
+            <Card className="border-2 border-[#8B1538] dark:border-primary">
+              <CardHeader className="bg-[#8B1538] dark:bg-primary text-white">
                 <CardTitle className="font-serif flex items-center">
                   <User className="w-5 h-5 mr-2" />
-                  Student Profile: {currentStudent.student_id}
+                  Student Profile: {currentStudent.display_name}
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div>
-                    <h4 className="font-serif font-medium text-[#8B1538] mb-2">Disability & Accommodations</h4>
+                    <h4 className="font-serif font-medium text-[#8B1538] dark:text-primary mb-2">Disability & Accommodations</h4>
                     <p className="font-serif text-sm mb-2">
                       <strong>Primary:</strong> {currentStudent.primary_disability}
                     </p>
@@ -136,7 +140,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
                   </div>
 
                   <div>
-                    <h4 className="font-serif font-medium text-[#8B1538] mb-2">Learning Preferences</h4>
+                    <h4 className="font-serif font-medium text-[#8B1538] dark:text-primary mb-2">Learning Preferences</h4>
                     <div className="space-y-1 font-serif text-sm">
                       <p>
                         <strong>Style:</strong> {currentStudent.learning_preferences.style}
@@ -151,7 +155,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
                   </div>
 
                   <div>
-                    <h4 className="font-serif font-medium text-[#8B1538] mb-2">Subjects & Availability</h4>
+                    <h4 className="font-serif font-medium text-[#8B1538] dark:text-primary mb-2">Subjects & Availability</h4>
                     <div className="space-y-2">
                       <div className="flex flex-wrap gap-1">
                         {currentStudent.preferred_subjects.map((subject) => (
@@ -160,7 +164,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
                           </Badge>
                         ))}
                       </div>
-                      <p className="font-serif text-xs text-gray-600">
+                      <p className="font-serif text-xs text-muted-foreground">
                         {currentStudent.availability.length} time slots available
                       </p>
                     </div>
@@ -169,8 +173,8 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
 
                 {currentStudent.additional_info && (
                   <div className="mt-4 pt-4 border-t">
-                    <h4 className="font-serif font-medium text-[#8B1538] mb-2">Additional Information</h4>
-                    <p className="font-serif text-sm text-gray-700">{currentStudent.additional_info}</p>
+                    <h4 className="font-serif font-medium text-[#8B1538] dark:text-primary mb-2">Additional Information</h4>
+                    <p className="font-serif text-sm text-muted-foreground">{currentStudent.additional_info}</p>
                   </div>
                 )}
               </CardContent>
@@ -181,7 +185,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
               {/* Study Plan */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-serif text-[#8B1538]">AI-Generated Study Plan</CardTitle>
+                  <CardTitle className="font-serif text-[#8B1538] dark:text-primary">AI-Generated Study Plan</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <StudyPlan student={currentStudent} />
@@ -191,7 +195,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
               {/* Chatbot */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="font-serif text-[#8B1538]">Clarifications & Questions</CardTitle>
+                  <CardTitle className="font-serif text-[#8B1538] dark:text-primary">Clarifications & Questions</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <TutorChatbot student={currentStudent} />

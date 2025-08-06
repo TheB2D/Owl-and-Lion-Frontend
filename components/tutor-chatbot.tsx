@@ -22,7 +22,7 @@ export function TutorChatbot({ student }: TutorChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
-      text: `Hi! I'm here to help you understand ${student.student_id}'s learning needs and answer any questions about their accommodations or preferences. What would you like to know?`,
+      text: `Hi! I'm here to help you understand ${student.display_name}'s learning needs and answer any questions about their accommodations or preferences. What would you like to know?`,
       sender: "bot",
       timestamp: new Date(),
     },
@@ -58,7 +58,7 @@ export function TutorChatbot({ student }: TutorChatbotProps) {
     const input = userInput.toLowerCase()
 
     if (input.includes("accommodation") || input.includes("need")) {
-      return `${student.student_id} needs these accommodations: ${student.accommodations_needed.join(", ")}. Make sure to implement these consistently in your tutoring sessions.`
+      return `${student.display_name} needs these accommodations: ${student.accommodations_needed.join(", ")}. Make sure to implement these consistently in your tutoring sessions.`
     }
 
     if (input.includes("learning style") || input.includes("prefer")) {

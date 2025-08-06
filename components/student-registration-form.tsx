@@ -52,7 +52,8 @@ const DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
 
 export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormProps) {
   const [formData, setFormData] = useState<Partial<Student>>({
-    student_id: `stu_${Date.now()}`,
+    student_id: "",
+    display_name: "",
     accommodations_needed: [],
     learning_preferences: {
       style: "",
@@ -64,6 +65,9 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
     additional_info: "",
   })
   const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
+  
+  // Validation state for FHDA ID
+  const isFhdaIdValid = formData.student_id && formData.student_id.length === 8 && /^\d{8}$/.test(formData.student_id)
 
   const handleAccommodationChange = (accommodation: string, checked: boolean) => {
     setFormData((prev) => ({
@@ -115,6 +119,13 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // Validate FHDA ID is exactly 8 digits
+    if (!formData.student_id || formData.student_id.length !== 8 || !/^\d{8}$/.test(formData.student_id)) {
+      alert('Please enter a valid 8-digit FHDA ID')
+      return
+    }
+    
     if (formData.primary_disability && formData.learning_preferences?.style) {
       onSubmit({
         ...formData,
@@ -127,18 +138,47 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
     <form onSubmit={handleSubmit} className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Basic Information</CardTitle>
+          <CardTitle className="font-serif text-primary">Basic Information</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="student_id" className="font-serif">
-              Student ID
+              FHDA ID
             </Label>
             <Input
               id="student_id"
               value={formData.student_id}
-              onChange={(e) => setFormData((prev) => ({ ...prev, student_id: e.target.value }))}
+              onChange={(e) => {
+                const value = e.target.value.replace(/\D/g, '').slice(0, 8);
+                setFormData((prev) => ({ ...prev, student_id: value }));
+              }}
+              className={`font-serif ${isFhdaIdValid ? 'border-green-500 focus:border-green-500' : formData.student_id ? 'border-red-500 focus:border-red-500' : ''}`}
+              placeholder="Enter your 8-digit FHDA ID"
+              maxLength={8}
+              pattern="[0-9]{8}"
+              title="Please enter exactly 8 digits"
+              required
+            />
+            <p className={`text-sm font-serif mt-1 ${isFhdaIdValid ? 'text-green-600' : formData.student_id ? 'text-red-600' : 'text-gray-500'}`}>
+              {isFhdaIdValid 
+                ? '✓ Valid FHDA ID' 
+                : formData.student_id 
+                  ? 'Please enter exactly 8 digits' 
+                  : 'Your FHDA ID is an 8-digit number assigned by the college'
+              }
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="display_name" className="font-serif">
+              Display Name (Preferred Name to be Called)
+            </Label>
+            <Input
+              id="display_name"
+              value={formData.display_name}
+              onChange={(e) => setFormData((prev) => ({ ...prev, display_name: e.target.value }))}
               className="font-serif"
+              placeholder="Enter your preferred display name"
               required
             />
           </div>
@@ -167,7 +207,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Accommodations Needed</CardTitle>
+          <CardTitle className="font-serif text-primary">Accommodations Needed</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -189,7 +229,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Learning Preferences</CardTitle>
+          <CardTitle className="font-serif text-primary">Learning Preferences</CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
@@ -265,7 +305,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Availability</CardTitle>
+          <CardTitle className="font-serif text-primary">Availability</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
@@ -304,7 +344,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Preferred Subjects</CardTitle>
+          <CardTitle className="font-serif text-primary">Preferred Subjects</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -326,7 +366,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Upload Materials</CardTitle>
+          <CardTitle className="font-serif text-primary">Upload Materials</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
@@ -335,7 +375,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
             <Input type="file" multiple onChange={handleFileUpload} className="hidden" id="file-upload" />
             <Label
               htmlFor="file-upload"
-              className="inline-flex items-center px-4 py-2 bg-[#8B1538] text-white rounded-md cursor-pointer hover:bg-[#7A1230] font-serif"
+              className="inline-flex items-center px-4 py-2 bg-primary text-primary-foreground rounded-md cursor-pointer hover:bg-primary/90 font-serif"
             >
               Choose Files
             </Label>
@@ -359,7 +399,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <Card>
         <CardHeader>
-          <CardTitle className="font-serif text-[#8B1538]">Additional Information</CardTitle>
+          <CardTitle className="font-serif text-primary">Additional Information</CardTitle>
         </CardHeader>
         <CardContent>
           <Textarea
@@ -373,7 +413,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
 
       <div className="space-y-4">
         <div className="flex justify-end">
-          <Button type="submit" className="bg-[#8B1538] hover:bg-[#7A1230] text-white font-serif px-8 py-2">
+          <Button type="submit" className="bg-primary hover:bg-primary/90 text-primary-foreground font-serif px-8 py-2">
             Submit Registration
           </Button>
         </div>
