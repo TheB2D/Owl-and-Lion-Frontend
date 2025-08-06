@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-This is "Owl & Tiger Access," a disability-focused student-tutor platform for Foothill & De Anza Colleges. The application is built with Next.js and React, featuring separate interfaces for students and tutors with accessibility accommodations and AI-powered study plans.
+This is "Owl & Lion Access," a disability-focused student-tutor platform for Foothill & De Anza Colleges. The application is built with Next.js and React, featuring separate interfaces for students and tutors with accessibility accommodations and AI-powered study plans.
 
 ## Architecture
 
@@ -49,10 +49,10 @@ npm start
 npm run lint
 ```
 
-### Secondary React App (owl-tiger-access/ subdirectory)
+### Secondary React App (owl-lion-access/ subdirectory)
 ```bash
 # Navigate to subdirectory first
-cd owl-tiger-access
+cd owl-lion-access
 
 # Development server
 npm start

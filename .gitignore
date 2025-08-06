@@ -2,7 +2,7 @@
 
 # dependencies
 /node_modules
-/owl-tiger-access/node_modules
+/owl-lion-access/node_modules
 
 # next.js
 /.next/

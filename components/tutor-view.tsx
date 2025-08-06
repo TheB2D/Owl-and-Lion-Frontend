@@ -22,10 +22,10 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-              <span className="text-[#8B1538] font-bold text-lg">O&T</span>
+              <span className="text-[#8B1538] font-bold text-lg">O&L</span>
             </div>
             <div>
-              <h1 className="text-xl font-serif font-bold">Owl & Tiger Access</h1>
+              <h1 className="text-xl font-serif font-bold">Owl & Lion Access</h1>
               <p className="text-sm opacity-90">Tutor Dashboard</p>
             </div>
           </div>

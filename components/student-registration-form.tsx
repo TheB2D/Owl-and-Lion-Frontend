@@ -279,6 +279,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
                   <Input
                     id={`${day}-start`}
                     type="time"
+                    value={(formData.availability || []).find((a) => a.day === day)?.start_time || ""}
                     onChange={(e) => handleAvailabilityChange(day, "start_time", e.target.value)}
                     className="font-serif"
                   />
@@ -290,6 +291,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
                   <Input
                     id={`${day}-end`}
                     type="time"
+                    value={(formData.availability || []).find((a) => a.day === day)?.end_time || ""}
                     onChange={(e) => handleAvailabilityChange(day, "end_time", e.target.value)}
                     className="font-serif"
                   />
@@ -369,10 +371,17 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
         </CardContent>
       </Card>
 
-      <div className="flex justify-end">
-        <Button type="submit" className="bg-[#8B1538] hover:bg-[#7A1230] text-white font-serif px-8 py-2">
-          Submit Registration
-        </Button>
+      <div className="space-y-4">
+        <div className="flex justify-end">
+          <Button type="submit" className="bg-[#8B1538] hover:bg-[#7A1230] text-white font-serif px-8 py-2">
+            Submit Registration
+          </Button>
+        </div>
+        <p className="text-sm text-gray-600 font-serif text-center">
+          By submitting this form, I consent to the collection and use of my personal data, including disability-related information and learning preferences, 
+          for the sole purpose of matching me with appropriate tutoring services and creating personalized study plans. 
+          This data will be shared only with assigned tutors and authorized college staff.
+        </p>
       </div>
     </form>
   )
