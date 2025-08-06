@@ -6,12 +6,40 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import type { UserRole } from "@/app/page"
+import { useEffect } from "react"
 
 interface LoginScreenProps {
   onLogin: (role: UserRole) => void
 }
 
+const onLogin2 = () => {
+  const url = new URL(window.location.href);
+  const code = url.searchParams.get("code");
+  let accessToken = null;
+
+  // Get the current authority (host + optional port)
+  const authority = window.location.host;  // e.g. "localhost:8000"
+
+  // Construct the redirect_uri using current protocol + authority
+  const redirectUri = `${window.location.protocol}//${authority}`;
+
+  // URL-encode redirect_uri
+  const encodedRedirectUri = encodeURIComponent(redirectUri);
+
+  // Build the login URL with the dynamic redirect_uri
+  const loginUrl = `https://us-west-2ttuysti65.auth.us-west-2.amazoncognito.com/login?client_id=5duv42nb7jfvuq0kuctin87irc&response_type=code&scope=email+openid+profile&redirect_uri=${encodedRedirectUri}`;
+
+  document.location = loginUrl;
+};
+
 export function LoginScreen({ onLogin }: LoginScreenProps) {
+  useEffect(() => {
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
+    console.log(code);
+  }, []); // Empty dependency array = run only once
+
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-8">
@@ -39,17 +67,23 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <CardDescription className="font-serif">Sign in to access your account</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="font-serif">
-                Email
-              </Label>
-              <Input id="email" type="email" placeholder="your.email@student.fhda.edu" className="font-serif" />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="font-serif">
-                Password
-              </Label>
-              <Input id="password" type="password" className="font-serif" />
+            <div className="space-y-3 pt-4">
+              <div className="grid grid-cols-2 gap-3">
+                <Button
+                  onClick={() => onLogin2()}
+                  variant="outline"
+                  className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                >
+                  Log in
+                </Button>
+                <Button
+                  onClick={() => onRegister()}
+                  variant="outline"
+                  className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                >
+                  Register
+                </Button>
+              </div>
             </div>
 
             {/* Role Selection */}
