@@ -205,7 +205,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     const code = url.searchParams.get("code");
     const accessToken = getAccessToken();
 
-    if (accessToken != null) {
+    if (accessToken != null && accessToken != "") {
       verifyToken();
     }
     if (code != null) {
