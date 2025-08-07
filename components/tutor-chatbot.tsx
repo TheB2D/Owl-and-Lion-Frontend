@@ -62,7 +62,7 @@ export function TutorChatbot({ student }: TutorChatbotProps) {
     }
 
     if (input.includes("learning style") || input.includes("prefer")) {
-      return `This student learns best through ${student.learning_preferences.style.toLowerCase()} methods in a ${student.learning_preferences.format.toLowerCase()} setting. They prefer ${student.learning_preferences.modality.toLowerCase()} sessions.`
+      return `This student learns best through ${student.learning_preferences?.style.toLowerCase()} methods in a ${student.learning_preferences.format.toLowerCase()} setting. They prefer ${student.learning_preferences.modality.toLowerCase()} sessions.`
     }
 
     if (input.includes("disability") || input.includes(student.primary_disability.toLowerCase())) {

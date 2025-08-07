@@ -22,14 +22,10 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
   const [students, setStudents] = useState<Student[]>([]);
 
   useEffect(() => {
-    const controller = new AbortController();
-
     // 1. Create an async function inside the effect
     const fetchData = async () => {
       try {
-        const response = await fetchWithApi(API_BASE + "/api/students/", {
-          signal: controller.signal
-        });
+        const response = await fetchWithApi(API_BASE + "/api/students/");
 
         if (response.ok) {
           const data = await response.json();
@@ -45,8 +41,6 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
 
     // 2. Call the async function
     fetchData();
-
-    return () => controller.abort(); // Proper cleanup
   }, []);
 
   return (
@@ -113,7 +107,7 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
 
                       <div className="flex items-center space-x-2">
                         <BookOpen className="w-4 h-4 text-muted-foreground" />
-                        <span className="font-serif text-sm">{student.learning_preferences.style}</span>
+                        <span className="font-serif text-sm">{student.learning_preferences?.style}</span>
                       </div>
 
                       <div className="flex flex-wrap gap-1">
@@ -132,7 +126,7 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
                       <div className="flex items-center space-x-2 text-sm text-muted-foreground">
                         <Clock className="w-4 h-4" />
                         <span className="font-serif">
-                          {student.learning_preferences.modality} • {student.learning_preferences.format}
+                          {student.learning_preferences?.modality} • {student.learning_preferences?.format}
                         </span>
                       </div>
                     </CardContent>
@@ -176,13 +170,13 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
                     <h4 className="font-serif font-medium text-[#8B1538] dark:text-primary mb-2">Learning Preferences</h4>
                     <div className="space-y-1 font-serif text-sm">
                       <p>
-                        <strong>Style:</strong> {currentStudent.learning_preferences.style}
+                        <strong>Style:</strong> {currentStudent.learning_preferences?.style}
                       </p>
                       <p>
-                        <strong>Format:</strong> {currentStudent.learning_preferences.format}
+                        <strong>Format:</strong> {currentStudent.learning_preferences?.format}
                       </p>
                       <p>
-                        <strong>Modality:</strong> {currentStudent.learning_preferences.modality}
+                        <strong>Modality:</strong> {currentStudent.learning_preferences?.modality}
                       </p>
                     </div>
                   </div>

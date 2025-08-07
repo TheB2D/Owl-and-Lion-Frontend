@@ -88,7 +88,7 @@ export function StudyPlan({ student }: StudyPlanProps) {
         <CardContent>
           <p className="font-serif text-blue-700 text-sm">
             This plan is tailored for {student.primary_disability} with{" "}
-            {student.learning_preferences.style.toLowerCase()}
+            {student.learning_preferences?.style.toLowerCase()}
             learning style in a {student.learning_preferences.format.toLowerCase()} format.
           </p>
         </CardContent>
