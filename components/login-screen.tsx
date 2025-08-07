@@ -7,38 +7,62 @@ import { Label } from "@/components/ui/label"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import type { UserRole } from "@/app/page"
 import { useEffect } from "react"
+import { API_BASE } from "@/lib/constants"
 
 interface LoginScreenProps {
   onLogin: (role: UserRole) => void
 }
 
-const onLogin2 = () => {
-  const url = new URL(window.location.href);
-  const code = url.searchParams.get("code");
-  let accessToken = null;
-
+export function LoginScreen({ onLogin }: LoginScreenProps) {
   // Get the current authority (host + optional port)
-  const authority = window.location.host;  // e.g. "localhost:8000"
+  const authority = window.location.host; // e.g. "localhost:8000"
 
   // Construct the redirect_uri using current protocol + authority
   const redirectUri = `${window.location.protocol}//${authority}`;
 
-  // URL-encode redirect_uri
-  const encodedRedirectUri = encodeURIComponent(redirectUri);
+  const onLoginClick = () => {
+    // URL-encode redirect_uri
+    const encodedRedirectUri = encodeURIComponent(redirectUri);
 
-  // Build the login URL with the dynamic redirect_uri
-  const loginUrl = `https://us-west-2ttuysti65.auth.us-west-2.amazoncognito.com/login?client_id=5duv42nb7jfvuq0kuctin87irc&response_type=code&scope=email+openid+profile&redirect_uri=${encodedRedirectUri}`;
+    // Build the login URL with the dynamic redirect_uri
+    const loginUrl = `https://us-west-2ttuysti65.auth.us-west-2.amazoncognito.com/login?client_id=5duv42nb7jfvuq0kuctin87irc&response_type=code&scope=email+openid+profile&redirect_uri=${encodedRedirectUri}`;
 
-  document.location = loginUrl;
-};
+    document.location = loginUrl;
+  };
 
-export function LoginScreen({ onLogin }: LoginScreenProps) {
+  async function getToken(code: string) {
+    try {
+      const response = await fetch(API_BASE + "/api/auth/login/", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ code, "redirect_uri": redirectUri })
+      });
+
+      const json = await response.json();
+
+      if (response.ok) {
+        console.log("Server response:", json);
+        onLogin("student");
+      }
+      else {
+        //document.location = loginUrl;
+      }
+    }
+    catch (error) {
+      console.error("Fetch error:", error);
+    }
+  }
+
   useEffect(() => {
     const url = new URL(window.location.href);
     const code = url.searchParams.get("code");
-    console.log(code);
-  }, []); // Empty dependency array = run only once
 
+    if (code != null) {
+      getToken(code);
+    }
+  }, []); // Empty dependency array = run only once
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -70,7 +94,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             <div className="space-y-3 pt-4">
               <div className="grid grid-cols-2 gap-3">
                 <Button
-                  onClick={() => onLogin2()}
+                  onClick={() => onLoginClick()}
                   variant="outline"
                   className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
                 >
