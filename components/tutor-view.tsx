@@ -47,7 +47,7 @@ export function TutorView({ students2, currentStudent, onStudentSelect, onLogout
     fetchData();
 
     return () => controller.abort(); // Proper cleanup
-  });
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
