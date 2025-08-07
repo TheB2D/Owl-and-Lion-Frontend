@@ -129,23 +129,38 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             {/* Role Selection */}
 
             {isRegisterPane && (
-            <div className="space-y-3 pt-4">
-              <Label className="font-serif text-sm font-medium">I am a:</Label>
-              <div className="grid grid-cols-2 gap-3">
-                <Button
-                  onClick={() => onLogin("student")}
-                  variant="outline"
-                  className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
-                >
-                  Student
-                </Button>
-                <Button
-                  onClick={() => onLogin("tutor")}
-                  variant="outline"
-                  className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
-                >
-                  Tutor
-                </Button>
+            <div>
+              <div className="space-y-2">
+                <Label htmlFor="username" className="font-serif">
+                  Username
+                </Label>
+                <Input id="username" type="text" placeholder="00000000" className="font-serif" />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="display_name" className="font-serif">
+                  Display Name
+                </Label>
+                <Input id="display_name" type="text" className="font-serif" />
+              </div>
+
+              <div className="space-y-3 pt-4">
+                <Label className="font-serif text-sm font-medium">I am a:</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <Button
+                    onClick={() => onLogin("student")}
+                    variant="outline"
+                    className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                  >
+                    Student
+                  </Button>
+                  <Button
+                    onClick={() => onLogin("tutor")}
+                    variant="outline"
+                    className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                  >
+                    Tutor
+                  </Button>
+                </div>
               </div>
             </div>
             )}
