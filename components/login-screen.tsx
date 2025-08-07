@@ -178,13 +178,21 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   }
 
   async function verifyToken() {
-    const response = await fetchWithApi(API_BASE + "/api/auth/me");
+    try
+    {
+      const response = await fetchWithApi(API_BASE + "/api/auth/me");
 
-    if (response.ok) {
-      const json = await response.json();
-      setAccessToken(json.access_token);
-
-      onLogin(json.role);
+      if (response.ok) {
+        const json = await response.json();
+        onLogin(json.role);
+      }
+      else {
+        setAccessToken("");
+      }
+    }
+    catch (error)
+    {
+      setAccessToken("");
     }
   }
 
@@ -208,7 +216,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     if (accessToken != null && accessToken != "") {
       verifyToken();
     }
-    if (code != null) {
+    else if (code != null) {
       console.log("code: " + code + ", getAccessToken: " + accessToken);
       getToken(code);
     }
