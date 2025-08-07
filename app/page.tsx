@@ -76,9 +76,9 @@ export default function Home() {
     return (
       <>
         <StudentView onRegistration={handleStudentRegistration} onLogout={handleLogout} />
-        <RegistrationSuccessModal 
-          isOpen={showSuccessModal} 
-          onClose={() => setShowSuccessModal(false)} 
+        <RegistrationSuccessModal
+          isOpen={showSuccessModal}
+          onClose={() => setShowSuccessModal(false)}
         />
       </>
     )
@@ -86,7 +86,7 @@ export default function Home() {
 
   return (
     <TutorView
-      students={students}
+      students2={students}
       currentStudent={currentStudent}
       onStudentSelect={setCurrentStudent}
       onLogout={handleLogout}

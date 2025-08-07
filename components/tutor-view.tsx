@@ -7,18 +7,20 @@ import { StudyPlan } from "@/components/study-plan"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import type { Student } from "@/app/page"
 import { LogOut, User, Clock, BookOpen, Brain } from "lucide-react"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { fetchWithApi } from "@/lib/fetchWithToken"
 import { API_BASE } from "@/lib/constants"
 
 interface TutorViewProps {
-  students: Student[]
+  students2: Student[]
   currentStudent: Student | null
   onStudentSelect: (student: Student) => void
   onLogout: () => void
 }
 
-export function TutorView({ students, currentStudent, onStudentSelect, onLogout }: TutorViewProps) {
+export function TutorView({ students2, currentStudent, onStudentSelect, onLogout }: TutorViewProps) {
+  const [students, setStudents] = useState<Student[]>([]);
+
   useEffect(() => {
     const controller = new AbortController();
 
@@ -31,8 +33,7 @@ export function TutorView({ students, currentStudent, onStudentSelect, onLogout 
 
         if (response.ok) {
           const data = await response.json();
-          //setStudents(data);
-          students = data;
+          setStudents(data);
         }
         else {
           console.error('Error fetching data:', await response.text());
