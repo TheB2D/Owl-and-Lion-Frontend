@@ -92,7 +92,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${API_BASE}/api/auth/register/`, {
+      const response = await fetch(`${API_BASE}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -152,7 +152,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
   async function getToken(code: string) {
     try {
-      const response = await fetch(API_BASE + "/api/auth/login/", {
+      const response = await fetch(API_BASE + "/api/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -256,11 +256,11 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 <Label htmlFor="user_id" className="font-serif">
                   User ID
                 </Label>
-                <Input 
-                  id="user_id" 
-                  type="text" 
-                  placeholder="25499943" 
-                  className="font-serif" 
+                <Input
+                  id="user_id"
+                  type="text"
+                  placeholder="25499943"
+                  className="font-serif"
                   value={formData.user_id}
                   onChange={(e) => handleInputChange('user_id', e.target.value)}
                   disabled={isLoading}
@@ -269,15 +269,15 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   <p className="text-sm text-red-600 dark:text-red-400 font-serif mt-1">{formErrors.user_id}</p>
                 )}
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="display_name" className="font-serif">
                   Display Name
                 </Label>
-                <Input 
-                  id="display_name" 
-                  type="text" 
-                  placeholder="Your name" 
+                <Input
+                  id="display_name"
+                  type="text"
+                  placeholder="Your name"
                   className="font-serif"
                   value={formData.display_name}
                   onChange={(e) => handleInputChange('display_name', e.target.value)}
@@ -295,8 +295,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     onClick={() => handleRoleSelect("student")}
                     variant={formData.role === "student" ? "default" : "outline"}
                     className={`h-12 font-serif border-2 transition-colors ${
-                      formData.role === "student" 
-                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary" 
+                      formData.role === "student"
+                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary"
                         : "border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white"
                     }`}
                     disabled={isLoading}
@@ -307,8 +307,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                     onClick={() => handleRoleSelect("tutor")}
                     variant={formData.role === "tutor" ? "default" : "outline"}
                     className={`h-12 font-serif border-2 transition-colors ${
-                      formData.role === "tutor" 
-                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary" 
+                      formData.role === "tutor"
+                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary"
                         : "border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white"
                     }`}
                     disabled={isLoading}
@@ -329,7 +329,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 >
                   {isLoading ? 'Creating Account...' : 'Create Account'}
                 </Button>
-                
+
                 <Button
                   onClick={onBackToSignIn}
                   variant="ghost"
