@@ -54,6 +54,7 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
   const [formData, setFormData] = useState<Partial<Student>>({
     student_id: "",
     display_name: "",
+    email: "",
     accommodations_needed: [],
     learning_preferences: {
       style: "",
@@ -97,12 +98,11 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
         updated[existingIndex] = { ...updated[existingIndex], [field]: value }
         return { ...prev, availability: updated }
       } else {
+        const newAvailability = { day, start_time: "", end_time: "" }
+        newAvailability[field] = value
         return {
           ...prev,
-          availability: [
-            ...availability,
-            { day, [field]: value, [field === "start_time" ? "end_time" : "start_time"]: "" },
-          ],
+          availability: [...availability, newAvailability],
         }
       }
     })
@@ -179,6 +179,21 @@ export function StudentRegistrationForm({ onSubmit }: StudentRegistrationFormPro
               onChange={(e) => setFormData((prev) => ({ ...prev, display_name: e.target.value }))}
               className="font-serif"
               placeholder="Enter your preferred display name"
+              required
+            />
+          </div>
+
+          <div>
+            <Label htmlFor="email" className="font-serif">
+              Email Address
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData((prev) => ({ ...prev, email: e.target.value }))}
+              className="font-serif"
+              placeholder="Enter your email address"
               required
             />
           </div>

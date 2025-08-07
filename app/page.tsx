@@ -11,6 +11,7 @@ export type UserRole = "student" | "tutor" | null
 export interface Student {
   student_id: string
   display_name: string
+  email: string
   primary_disability: string
   accommodations_needed: string[]
   learning_preferences: {
