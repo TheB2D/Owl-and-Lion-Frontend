@@ -16,6 +16,62 @@ interface LoginScreenProps {
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
   const [isRegisterPane, setRegisterPaneOpen] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    user_id: '',
+    display_name: '',
+    role: '' as UserRole | ''
+  });
+  const [formErrors, setFormErrors] = useState({
+    user_id: '',
+    display_name: '',
+    role: ''
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  const validateForm = () => {
+    const errors = { user_id: '', display_name: '', role: '' };
+    let isValid = true;
+
+    // Validate user_id (numeric and not empty)
+    if (!formData.user_id.trim()) {
+      errors.user_id = 'User ID is required';
+      isValid = false;
+    } else if (!/^\d+$/.test(formData.user_id.trim())) {
+      errors.user_id = 'User ID must be numeric';
+      isValid = false;
+    }
+
+    // Validate display_name (not empty)
+    if (!formData.display_name.trim()) {
+      errors.display_name = 'Display Name is required';
+      isValid = false;
+    }
+
+    // Validate role selection
+    if (!formData.role) {
+      errors.role = 'Please select a role';
+      isValid = false;
+    }
+
+    setFormErrors(errors);
+    return isValid;
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (formErrors[field as keyof typeof formErrors]) {
+      setFormErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  const handleRoleSelect = (role: UserRole) => {
+    setFormData(prev => ({ ...prev, role }));
+    if (formErrors.role) {
+      setFormErrors(prev => ({ ...prev, role: '' }));
+    }
+  };
 
   let loginUrl: string = "";
   let redirectUri: string = "";
@@ -26,6 +82,72 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
   const onRegisterClick = () => {
     setRegisterPaneOpen(true);
+  };
+
+  const onRegisterSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(`${API_BASE}/api/auth/register/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          user_id: formData.user_id.trim(),
+          display_name: formData.display_name.trim(),
+          role: formData.role
+        })
+      });
+
+      if (response.ok) {
+        // Success - show confirmation modal
+        setShowSuccessModal(true);
+      } else if (response.status === 422) {
+        // Handle validation errors
+        const errorData = await response.json();
+        if (errorData.detail) {
+          // Handle FastAPI validation errors
+          const apiErrors = { user_id: '', display_name: '', role: '' };
+          if (Array.isArray(errorData.detail)) {
+            errorData.detail.forEach((error: any) => {
+              if (error.loc && error.loc.length > 1) {
+                const field = error.loc[1];
+                if (field in apiErrors) {
+                  apiErrors[field as keyof typeof apiErrors] = error.msg;
+                }
+              }
+            });
+          }
+          setFormErrors(apiErrors);
+        }
+      } else {
+        // Generic error handling
+        setFormErrors(prev => ({ ...prev, role: 'Registration failed. Please try again.' }));
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setFormErrors(prev => ({ ...prev, role: 'Network error. Please check your connection and try again.' }));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const onBackToSignIn = () => {
+    setRegisterPaneOpen(false);
+    setFormData({ user_id: '', display_name: '', role: '' });
+    setFormErrors({ user_id: '', display_name: '', role: '' });
+  };
+
+  const onSuccessModalClose = () => {
+    setShowSuccessModal(false);
+    setRegisterPaneOpen(false);
+    setFormData({ user_id: '', display_name: '', role: '' });
+    setFormErrors({ user_id: '', display_name: '', role: '' });
   };
 
   async function getToken(code: string) {
@@ -129,43 +251,120 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
             {/* Role Selection */}
 
             {isRegisterPane && (
-            <div>
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="username" className="font-serif">
-                  Username
+                <Label htmlFor="user_id" className="font-serif">
+                  User ID
                 </Label>
-                <Input id="username" type="text" placeholder="00000000" className="font-serif" />
+                <Input 
+                  id="user_id" 
+                  type="text" 
+                  placeholder="25499943" 
+                  className="font-serif" 
+                  value={formData.user_id}
+                  onChange={(e) => handleInputChange('user_id', e.target.value)}
+                  disabled={isLoading}
+                />
+                {formErrors.user_id && (
+                  <p className="text-sm text-red-600 dark:text-red-400 font-serif mt-1">{formErrors.user_id}</p>
+                )}
               </div>
+              
               <div className="space-y-2">
                 <Label htmlFor="display_name" className="font-serif">
                   Display Name
                 </Label>
-                <Input id="display_name" type="text" className="font-serif" />
+                <Input 
+                  id="display_name" 
+                  type="text" 
+                  placeholder="Your name" 
+                  className="font-serif"
+                  value={formData.display_name}
+                  onChange={(e) => handleInputChange('display_name', e.target.value)}
+                  disabled={isLoading}
+                />
+                {formErrors.display_name && (
+                  <p className="text-sm text-red-600 dark:text-red-400 font-serif mt-1">{formErrors.display_name}</p>
+                )}
               </div>
 
-              <div className="space-y-3 pt-4">
+              <div className="space-y-3 pt-2">
                 <Label className="font-serif text-sm font-medium">I am a:</Label>
                 <div className="grid grid-cols-2 gap-3">
                   <Button
-                    onClick={() => onLogin("student")}
-                    variant="outline"
-                    className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                    onClick={() => handleRoleSelect("student")}
+                    variant={formData.role === "student" ? "default" : "outline"}
+                    className={`h-12 font-serif border-2 transition-colors ${
+                      formData.role === "student" 
+                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary" 
+                        : "border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white"
+                    }`}
+                    disabled={isLoading}
                   >
                     Student
                   </Button>
                   <Button
-                    onClick={() => onLogin("tutor")}
-                    variant="outline"
-                    className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
+                    onClick={() => handleRoleSelect("tutor")}
+                    variant={formData.role === "tutor" ? "default" : "outline"}
+                    className={`h-12 font-serif border-2 transition-colors ${
+                      formData.role === "tutor" 
+                        ? "bg-[#8B1538] dark:bg-primary text-white border-[#8B1538] dark:border-primary" 
+                        : "border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white"
+                    }`}
+                    disabled={isLoading}
                   >
                     Tutor
                   </Button>
                 </div>
+                {formErrors.role && (
+                  <p className="text-sm text-red-600 dark:text-red-400 font-serif mt-1">{formErrors.role}</p>
+                )}
+              </div>
+
+              <div className="space-y-3 pt-4">
+                <Button
+                  onClick={onRegisterSubmit}
+                  className="w-full h-12 font-serif bg-[#8B1538] dark:bg-primary hover:bg-[#8B1538]/90 dark:hover:bg-primary/90 text-white"
+                  disabled={isLoading}
+                >
+                  {isLoading ? 'Creating Account...' : 'Create Account'}
+                </Button>
+                
+                <Button
+                  onClick={onBackToSignIn}
+                  variant="ghost"
+                  className="w-full font-serif text-[#8B1538] dark:text-primary hover:bg-[#8B1538]/10 dark:hover:bg-primary/10"
+                  disabled={isLoading}
+                >
+                  Back to Sign In
+                </Button>
               </div>
             </div>
             )}
           </CardContent>
         </Card>
+
+        {/* Success Modal */}
+        {showSuccessModal && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <Card className="w-full max-w-md border-2 border-border bg-card">
+              <CardHeader className="text-center">
+                <CardTitle className="text-xl font-serif text-[#8B1538] dark:text-primary">Account Created Successfully!</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4 text-center">
+                <p className="font-serif text-muted-foreground">
+                  Your account has been created. You can now sign in to access the platform.
+                </p>
+                <Button
+                  onClick={onSuccessModalClose}
+                  className="w-full h-12 font-serif bg-[#8B1538] dark:bg-primary hover:bg-[#8B1538]/90 dark:hover:bg-primary/90 text-white"
+                >
+                  Continue
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="text-center text-sm text-muted-foreground font-serif">
           Need help? Contact{" "}
