@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ModeToggle } from "@/components/ui/mode-toggle"
 import type { UserRole } from "@/app/page"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { API_BASE } from "@/lib/constants"
 import { getAccessToken, setAccessToken } from "@/lib/fetchWithToken"
 
@@ -15,11 +15,17 @@ interface LoginScreenProps {
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
+  const [isRegisterPane, setRegisterPaneOpen] = useState<boolean>(false);
+
   let loginUrl: string = "";
   let redirectUri: string = "";
 
   const onLoginClick = () => {
     document.location = loginUrl;
+  };
+
+  const onRegisterClick = () => {
+    setRegisterPaneOpen(true);
   };
 
   async function getToken(code: string) {
@@ -95,10 +101,11 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
         {/* Login Form */}
         <Card className="border-2 border-border bg-card">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl font-serif text-[#8B1538] dark:text-primary">Welcome Back</CardTitle>
-            <CardDescription className="font-serif">Sign in to access your account</CardDescription>
+            <CardTitle className="text-xl font-serif text-[#8B1538] dark:text-primary">{isRegisterPane ? "Create an account" : "Sign in or register"}</CardTitle>
+            <CardDescription className="font-serif"></CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            {!isRegisterPane && (
             <div className="space-y-3 pt-4">
               <div className="grid grid-cols-2 gap-3">
                 <Button
@@ -106,10 +113,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                   variant="outline"
                   className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
                 >
-                  Log in
+                  Sign in
                 </Button>
                 <Button
-                  onClick={() => onRegister()}
+                  onClick={() => onRegisterClick()}
                   variant="outline"
                   className="h-12 font-serif border-2 border-[#8B1538] dark:border-primary text-[#8B1538] dark:text-primary hover:bg-[#8B1538] dark:hover:bg-primary hover:text-white transition-colors"
                 >
@@ -117,8 +124,11 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 </Button>
               </div>
             </div>
+            )}
 
             {/* Role Selection */}
+
+            {isRegisterPane && (
             <div className="space-y-3 pt-4">
               <Label className="font-serif text-sm font-medium">I am a:</Label>
               <div className="grid grid-cols-2 gap-3">
@@ -138,6 +148,7 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
                 </Button>
               </div>
             </div>
+            )}
           </CardContent>
         </Card>
 
