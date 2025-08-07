@@ -5,6 +5,8 @@ import { LoginScreen } from "@/components/login-screen"
 import { StudentView } from "@/components/student-view"
 import { TutorView } from "@/components/tutor-view"
 import { RegistrationSuccessModal } from "@/components/registration-success-modal"
+import { fetchWithApi, setAccessToken } from "@/lib/fetchWithToken"
+import { API_BASE } from "@/lib/constants"
 
 export type UserRole = "student" | "tutor" | null
 
@@ -41,7 +43,7 @@ export default function Home() {
 
   const handleStudentRegistration = async (studentData: Student) => {
     try {
-      const response = await fetch(`/api/students/${studentData.student_id}`, {
+      const response = await fetchWithApi(API_BASE + `/api/students/${studentData.student_id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -65,8 +67,9 @@ export default function Home() {
   }
 
   const handleLogout = () => {
-    setUserRole(null)
-    setCurrentStudent(null)
+    setAccessToken("");
+    setUserRole(null);
+    setCurrentStudent(null);
   }
 
   if (!userRole) {
