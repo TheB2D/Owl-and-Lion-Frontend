@@ -421,8 +421,33 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
           </div>
         )}
 
+        {/* Accessibility Assistance Button */}
+        <Card className="border-2 border-[#8B1538] dark:border-primary bg-[#8B1538]/5 dark:bg-primary/5">
+          <CardContent className="p-4">
+            <div className="text-center space-y-3">
+              <h3 className="font-serif font-semibold text-[#8B1538] dark:text-primary">
+                Need Assistance?
+              </h3>
+              <p className="text-sm text-muted-foreground font-serif">
+                If you have difficulty typing or navigating this form due to a disability, we're here to help.
+              </p>
+              <div className="space-y-2">
+                <Button
+                  onClick={() => window.location.href = 'tel:+16509492346'}
+                  className="w-full h-12 font-serif bg-[#8B1538] dark:bg-primary hover:bg-[#8B1538]/90 dark:hover:bg-primary/90 text-white"
+                >
+                  Call for Assistance: (415) xxx-xxxx
+                </Button>
+                <p className="text-xs text-muted-foreground font-serif">
+                  Our accessibility support team can help you register and navigate the platform
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         <div className="text-center text-sm text-muted-foreground font-serif">
-          Need help? Contact{" "}
+          General support:{" "}
           <a href="mailto:support@fhda.edu" className="text-[#8B1538] dark:text-primary hover:underline">
             support@fhda.edu
           </a>
