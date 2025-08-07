@@ -8,7 +8,7 @@ import { ModeToggle } from "@/components/ui/mode-toggle"
 import type { UserRole } from "@/app/page"
 import { useEffect, useState } from "react"
 import { API_BASE } from "@/lib/constants"
-import { getAccessToken, setAccessToken } from "@/lib/fetchWithToken"
+import { fetchWithApi, getAccessToken, setAccessToken } from "@/lib/fetchWithToken"
 
 interface LoginScreenProps {
   onLogin: (role: UserRole) => void
@@ -177,6 +177,17 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     }
   }
 
+  async function verifyToken() {
+    const response = await fetchWithApi(API_BASE + "/api/auth/me");
+
+    if (response.ok) {
+      const json = await response.json();
+      setAccessToken(json.access_token);
+
+      onLogin(json.role);
+    }
+  }
+
   useEffect(() => {
     // Get the current authority (host + optional port)
     const authority = window.location.host; // e.g. "localhost:8000"
@@ -194,7 +205,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
     const code = url.searchParams.get("code");
     const accessToken = getAccessToken();
 
-    if (code != null && accessToken == null) {
+    if (accessToken != null) {
+      verifyToken();
+    }
+    if (code != null) {
       console.log("code: " + code + ", getAccessToken: " + accessToken);
       getToken(code);
     }
