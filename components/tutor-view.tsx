@@ -7,6 +7,9 @@ import { StudyPlan } from "@/components/study-plan"
 import { ThemeToggle } from "@/components/ui/theme-toggle"
 import type { Student } from "@/app/page"
 import { LogOut, User, Clock, BookOpen, Brain } from "lucide-react"
+import { useEffect } from "react"
+import { fetchWithApi } from "@/lib/fetchWithToken"
+import { API_BASE } from "@/lib/constants"
 
 interface TutorViewProps {
   students: Student[]
@@ -16,6 +19,35 @@ interface TutorViewProps {
 }
 
 export function TutorView({ students, currentStudent, onStudentSelect, onLogout }: TutorViewProps) {
+  useEffect(() => {
+    const controller = new AbortController();
+
+    // 1. Create an async function inside the effect
+    const fetchData = async () => {
+      try {
+        const response = await fetchWithApi(API_BASE + "/api/students/", {
+          signal: controller.signal
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          //setStudents(data);
+          students = data;
+        }
+        else {
+          console.error('Error fetching data:', await response.text());
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    };
+
+    // 2. Call the async function
+    fetchData();
+
+    return () => controller.abort(); // Proper cleanup
+  });
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
