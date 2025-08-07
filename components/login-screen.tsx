@@ -35,10 +35,10 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
       const json = await response.json();
 
       if (response.ok) {
-        console.log("Server response:", json);
+        console.log("JWT:", json);
         setAccessToken(json.access_token)
 
-        onLogin("tutor");
+        onLogin(json.role);
       }
       else {
         //document.location = loginUrl;
