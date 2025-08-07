@@ -36,9 +36,9 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
       if (response.ok) {
         console.log("Server response:", json);
-        setAccessToken(json.access_code)
+        setAccessToken(json.access_token)
 
-        onLogin("student");
+        onLogin("tutor");
       }
       else {
         //document.location = loginUrl;
