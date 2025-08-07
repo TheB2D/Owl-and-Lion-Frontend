@@ -8,25 +8,17 @@ import { ModeToggle } from "@/components/ui/mode-toggle"
 import type { UserRole } from "@/app/page"
 import { useEffect } from "react"
 import { API_BASE } from "@/lib/constants"
+import { getAccessToken, setAccessToken } from "@/lib/fetchWithToken"
 
 interface LoginScreenProps {
   onLogin: (role: UserRole) => void
 }
 
 export function LoginScreen({ onLogin }: LoginScreenProps) {
-  // Get the current authority (host + optional port)
-  const authority = window.location.host; // e.g. "localhost:8000"
-
-  // Construct the redirect_uri using current protocol + authority
-  const redirectUri = `${window.location.protocol}//${authority}`;
+  let loginUrl: string = "";
+  let redirectUri: string = "";
 
   const onLoginClick = () => {
-    // URL-encode redirect_uri
-    const encodedRedirectUri = encodeURIComponent(redirectUri);
-
-    // Build the login URL with the dynamic redirect_uri
-    const loginUrl = `https://us-west-2ttuysti65.auth.us-west-2.amazoncognito.com/login?client_id=5duv42nb7jfvuq0kuctin87irc&response_type=code&scope=email+openid+profile&redirect_uri=${encodedRedirectUri}`;
-
     document.location = loginUrl;
   };
 
@@ -44,6 +36,8 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
 
       if (response.ok) {
         console.log("Server response:", json);
+        setAccessToken(json.access_code)
+
         onLogin("student");
       }
       else {
@@ -56,10 +50,24 @@ export function LoginScreen({ onLogin }: LoginScreenProps) {
   }
 
   useEffect(() => {
+    // Get the current authority (host + optional port)
+    const authority = window.location.host; // e.g. "localhost:8000"
+
+    // Construct the redirect_uri using current protocol + authority
+    redirectUri = `${window.location.protocol}//${authority}`;
+
+    // URL-encode redirect_uri
+    const encodedRedirectUri = encodeURIComponent(redirectUri);
+
+    // Build the login URL with the dynamic redirect_uri
+    loginUrl = `https://us-west-2ttuysti65.auth.us-west-2.amazoncognito.com/login?client_id=5duv42nb7jfvuq0kuctin87irc&response_type=code&scope=email+openid+profile&redirect_uri=${encodedRedirectUri}`;
+
     const url = new URL(window.location.href);
     const code = url.searchParams.get("code");
+    const accessToken = getAccessToken();
 
-    if (code != null) {
+    if (code != null && accessToken == null) {
+      console.log("code: " + code + ", getAccessToken: " + accessToken);
       getToken(code);
     }
   }, []); // Empty dependency array = run only once
